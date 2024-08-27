@@ -22,6 +22,10 @@ public class Wrappers {
         driver.get(url);
     }
 
+    // Navigate to YouTube
+    public void navigateToYouTube() {
+        driver.get("https://www.youtube.com");
+    }
     // Click an element after waiting for it to be clickable
     public void click(By locator) {
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
@@ -56,6 +60,16 @@ public class Wrappers {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
-}
+    public void scrollFunction(String num) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        String param1 = "window.scrollBy(0," + num + ")";
+        js.executeScript(param1);
+    }
+
+    //  public void navigateToYouTube() {
+    //     // TODO Auto-generated method stub
+    //    throw new UnsupportedOperationException("Unimplemented method 'navigateToYouTube'");
+    // }
+ }
 
 

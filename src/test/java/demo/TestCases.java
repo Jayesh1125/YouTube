@@ -1,6 +1,7 @@
 package demo;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -239,6 +240,52 @@ public class TestCases extends ExcelDataProvider {
             softAssert.assertAll();
         }
     }
+    
+@Test(dataProvider = "excelData")
+public void testCase05(String tobeSearched) throws InterruptedException {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        Wrappers homePage = new Wrappers(driver);
+        homePage.navigateToYouTube();
+        WebElement element1 = driver.findElement(By.xpath("//input[@id='search']"));
+        element1.sendKeys(tobeSearched);
+        element1.sendKeys(Keys.ENTER);
+        wait.until(ExpectedConditions.presenceOfElementLocated(
+                        By.xpath("//ytd-video-renderer/div[@id='dismissible']//span[contains(text(),'views')]")));
+        java.util.List<WebElement> videoList = driver.findElements(By
+                        .xpath("//ytd-video-renderer/div[@id='dismissible']//span[contains(text(),'views')]"));
+        long sum = 0;
+        for (WebElement videos : videoList) {
+
+                String viewsText = videos.getText();
+                String viewsText1 = viewsText.trim();
+                String arr[] = viewsText1.split(" ");
+                String val = arr[0];
+                System.out.println("view for single video : " + val);
+                long viewsNum = 0;
+                String numericString = "";
+                if (val.contains("M")) {
+                        numericString = val.replace("M", "");
+                        if (numericString.contains(".")) {
+                                viewsNum = (long) (Double.parseDouble(numericString) * 1000000);
+                        } else {
+                                viewsNum = Integer.parseInt(numericString) * 1000000;
+                        }
+                } else if (val.contains("K")) {
+                        numericString = val.replace("K", "");
+                        if (numericString.contains(".")) {
+                                viewsNum = (long) (Double.parseDouble(numericString) * 1000);
+                        } else {
+                                viewsNum = Integer.parseInt(numericString) * 1000;
+                        }
+                }
+                sum = sum + viewsNum;
+                homePage.scrollFunction("5000");
+                if (sum >= 100000000) {
+                        break;
+                }
+        }
+        System.out.println("Total views are : " + sum);
+}
 
     @AfterTest
     public void closeBrowser() {
